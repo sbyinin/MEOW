@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>MEOW by renzhn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">MEOW</h1>
+      <h2 class="project-tagline">MEOW is a fork of COW that uses whitelist mode.</h2>
+      <a href="https://github.com/renzhn/MEOW" class="btn">View on GitHub</a>
+      <a href="https://github.com/renzhn/MEOW/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/renzhn/MEOW/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="meow-proxy" class="anchor" href="#meow-proxy" aria-hidden="true"><span class="octicon octicon-link"></span></a>MEOW Proxy</h1>
+
+<p>当前版本：1.3 <a href="CHANGELOG">CHANGELOG</a>
+<a href="https://travis-ci.org/renzhn/MEOW"><img src="https://travis-ci.org/renzhn/MEOW.png?branch=master" alt="Build Status"></a></p>
+
+<pre>
+       /\
+   )  ( ')     MEOW 是 [COW](https://github.com/cyfdecyf/cow) 的一个派生版本
+  (  /  )      MEOW 与 COW 最大的不同之处在于，COW 采用黑名单模式， 而 MEOW 采用白名单模式
+   \(__)|      国内网站直接连接，其他的网站使用代理连接
+</pre>
+
+<p>如果你的代理有充足的流量和比直接连接国外网站更快的速度，为和不将国外网站统统用代理来连接呢？麻麻再也不用担心网站被墙了！发挥出你goagent和shadowsocks更大的潜力吧！</p>
+
+<h2>
+<a id="更新说明" class="anchor" href="#%E6%9B%B4%E6%96%B0%E8%AF%B4%E6%98%8E" aria-hidden="true"><span class="octicon octicon-link"></span></a>更新说明</h2>
+
+<ul>
+<li>
+<p>2015-07-16</p>
+
+<p>1.3 版本更新了默认的直连列表、加入了强制使用代理列表，强烈推荐旧版本用户更新 <a href="https://raw.githubusercontent.com/renzhn/MEOW/master/doc/sample-config/direct">direct</a> 文件和下载 <a href="https://raw.githubusercontent.com/renzhn/MEOW/master/doc/sample-config/proxy">proxy</a> 文件（或者重新安装）</p>
+</li>
+</ul>
+
+<h2>
+<a id="获取" class="anchor" href="#%E8%8E%B7%E5%8F%96" aria-hidden="true"><span class="octicon octicon-link"></span></a>获取</h2>
+
+<ul>
+<li>
+<p><strong>OS X, Linux:</strong> 执行以下命令（也可用于更新）</p>
+
+<pre><code>curl -L git.io/meowproxy | bash
+</code></pre>
+
+<p>环境变量 <code>MEOW_INSTALLDIR</code> 可以指定安装的路径，若该环境变量不是目录则询问用户</p>
+</li>
+<li>
+<strong>Windows:</strong> <a href="http://meowproxy.me/dist/windows/">下载地址</a>
+</li>
+<li>
+<strong>从源码安装:</strong> 安装 <a href="http://golang.org/doc/install">Go</a>，然后 <code>go get github.com/renzhn/MEOW</code>
+</li>
+</ul>
+
+<h2>
+<a id="配置" class="anchor" href="#%E9%85%8D%E7%BD%AE" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置</h2>
+
+<p>编辑 <code>~/.meow/rc</code> (OS X, Linux) 或 <code>rc.txt</code> (Windows)，例子：</p>
+
+<pre><code># 监听地址，设为0.0.0.0可以监听所有端口，共享给局域网使用
+listen = http://127.0.0.1:4411
+# 至少指定一个上级代理
+# SOCKS5 上级代理
+# proxy = socks5://127.0.0.1:1080
+# HTTP 上级代理
+# proxy = http://127.0.0.1:8087
+# shadowsocks 上级代理
+# proxy = ss://aes-128-cfb:password@example.server.com:25
+</code></pre>
+
+<h2>
+<a id="工作方式" class="anchor" href="#%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>工作方式</h2>
+
+<p>当 MEOW 启动时会从配置文件加载直连列表和强制使用代理列表，详见下面两节。</p>
+
+<p>当通过 MEOW 访问一个网站时，MEOW 会：</p>
+
+<ul>
+<li>检查域名是否在直连列表中，如果在则直连</li>
+<li>检查域名是否在强制使用代理列表中，如果在则通过代理连接</li>
+<li>
+<strong>检查域名的 IP 是否为国内 IP</strong>
+
+<ul>
+<li>通过本地 DNS 解析域名，得到域名的 IP</li>
+<li>如果是国内 IP 则直连，否则通过代理连接</li>
+<li>将域名加入临时的直连或者强制使用代理列表，下次可以不用 DNS 解析直接判断域名是否直连</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="直连列表" class="anchor" href="#%E7%9B%B4%E8%BF%9E%E5%88%97%E8%A1%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>直连列表</h2>
+
+<p>直接连接的域名列表保存在 <code>~/.meow/direct</code> (OS X, Linux) 或 <code>direct.txt</code> (Windows)</p>
+
+<p>匹配域名<strong>按 . 分隔的后两部分</strong>或者<strong>整个域名</strong>，例子：</p>
+
+<ul>
+<li> <code>baidu.com</code> =&gt; <code>*.baidu.com</code>
+</li>
+<li> <code>com.cn</code> =&gt; <code>*.com.cn</code>
+</li>
+<li> <code>edu.cn</code> =&gt; <code>*.edu.cn</code>
+</li>
+<li> <code>music.163.com</code> =&gt; <code>music.163.com</code>
+</li>
+</ul>
+
+<p>一般是<strong>确定</strong>要直接连接的网站</p>
+
+<h2>
+<a id="强制使用代理列表" class="anchor" href="#%E5%BC%BA%E5%88%B6%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86%E5%88%97%E8%A1%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>强制使用代理列表</h2>
+
+<p>强制使用代理连接的域名列表保存在 <code>~/.meow/proxy</code> (OS X, Linux) 或 <code>proxy.txt</code> (Windows)，语法格式与直连列表相同
+（注意：匹配的是域名<strong>按 . 分隔的后两部分</strong>或者<strong>整个域名</strong>）</p>
+
+<p>当本地 DNS 将被墙网站域名解析为国内 IP 时十分有用</p>
+
+<h2>
+<a id="与-cow-相比的修改" class="anchor" href="#%E4%B8%8E-cow-%E7%9B%B8%E6%AF%94%E7%9A%84%E4%BF%AE%E6%94%B9" aria-hidden="true"><span class="octicon octicon-link"></span></a>与 COW 相比的修改</h2>
+
+<ul>
+<li>通过IP判断国内网站</li>
+<li>修改了判断域名的方式，只匹配句号分隔的后两部分</li>
+<li>移除了<code>blocked</code>、<code>sitestat</code>文件及相关的功能</li>
+</ul>
+
+<h2>
+<a id="一些细节" class="anchor" href="#%E4%B8%80%E4%BA%9B%E7%BB%86%E8%8A%82" aria-hidden="true"><span class="octicon octicon-link"></span></a>一些细节</h2>
+
+<ul>
+<li>程序的输出结果：DIRECT表示直连，PROXY表示通过代理连接；GET ... 200 OK表示成功获取数据，以此类推</li>
+<li>如果检查到域名的IP是国内的IP（当然是不在直连列表里的域名），MEOW 会将此域名缓存到内存中的直连列表。PAC 文件中包含了从<code>direct</code>文件中读取和内存中缓存的域名直连列表的定义，浏览器设置为PAC后会对这些域名直接连接否则使用 MEOW 代理。</li>
+<li>MEOW 判断是否该直连的效率很高。判断直连域名用Map，判断国内IP用二分查找并且缓存，因此不用担心判断域名导致网速变慢。甚至去掉<code>direct</code>文件 MEOW 也可以工作。</li>
+<li>以<code>-h</code>运行查看 MEOW 的命令行参数</li>
+</ul>
+
+<h2>
+<a id="致谢" class="anchor" href="#%E8%87%B4%E8%B0%A2" aria-hidden="true"><span class="octicon octicon-link"></span></a>致谢</h2>
+
+<ul>
+<li>
+<a href="https://github.com/cyfdecyf" class="user-mention">@cyfdecyf</a> - COW author</li>
+<li>Github - Github Student Pack</li>
+<li>
+<a href="https://www.pandafan.org/pac/index.html">https://www.pandafan.org/pac/index.html</a> - Domain White List</li>
+<li>
+<a href="https://github.com/Leask/Flora_Pac">https://github.com/Leask/Flora_Pac</a> - CN IP Data</li>
+</ul>
+
+<h2>
+<a id="推荐我的另一作品" class="anchor" href="#%E6%8E%A8%E8%8D%90%E6%88%91%E7%9A%84%E5%8F%A6%E4%B8%80%E4%BD%9C%E5%93%81" aria-hidden="true"><span class="octicon octicon-link"></span></a>推荐（我的另一作品）</h2>
+
+<p>还在为安卓应用后台苦恼吗？使用<strong>冷桌面</strong>长按即可冻结或者解冻应用，再也不用担心国产应用跑后台啦~</p>
+
+<p>详见：<a href="http://www.coolapk.com/apk/net.ohrz.coldlauncher">http://www.coolapk.com/apk/net.ohrz.coldlauncher</a></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/renzhn/MEOW">MEOW</a> is maintained by <a href="https://github.com/renzhn">renzhn</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-65650417-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
+
