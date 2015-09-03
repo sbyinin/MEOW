@@ -580,11 +580,12 @@ func (c *clientConn) readResponse(sv *serverConn, r *Request, rp *Response) (err
 		}
 	}
 	r.state = rsDone
-	/*
+	
 		if debug {
+			debug.Printf("[Finished] %s \n", r)
 			debug.Printf("[Finished] %v request %s %s\n", c.RemoteAddr(), r.Method, r.URL)
 		}
-	*/
+	
 	if rp.ConnectionKeepAlive {
 		if rp.KeepAlive == time.Duration(0) {
 			sv.willCloseOn = time.Now().Add(defaultServerConnTimeout)
